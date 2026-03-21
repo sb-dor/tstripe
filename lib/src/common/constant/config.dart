@@ -67,6 +67,21 @@ abstract final class Config {
   /// e.g. 32
   static const int passwordMaxLength = int.fromEnvironment('PASSWORD_MAX_LENGTH', defaultValue: 32);
 
+  // --- STRIPE ---
+
+  /// Stripe publishable key (pk_test_...). Safe to expose in client code.
+  static const String stripePublishableKey = String.fromEnvironment(
+    'STRIPE_PUBLISHABLE_KEY',
+    defaultValue: '',
+  );
+
+  /// Stripe secret key — used ONLY for test PaymentIntent creation (no backend).
+  /// WARNING: Never use a secret key in production client code.
+  static const String stripeSecretKey = String.fromEnvironment(
+    'STRIPE_SECRET_KEY',
+    defaultValue: '',
+  );
+
   // --- AGORA --- //
 
   /// Agora App ID from https://console.agora.io

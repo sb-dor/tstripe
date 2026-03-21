@@ -1,6 +1,9 @@
 # Claude Code local settings (machine-specific)
 .claude/settings.local.json
 
+# Config files containing secrets
+config/production.json
+
 # Miscellaneous
 *.class
 *.log

@@ -49,5 +49,16 @@
 	<string>Camera access is required for video calls.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone access is required for audio and video calls.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tstripe</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

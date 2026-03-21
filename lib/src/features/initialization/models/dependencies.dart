@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:tstripe/src/common/model/app_metadata.dart';
 import 'package:tstripe/src/features/authentication/controller/authentication_controller.dart';
 import 'package:tstripe/src/features/initialization/widget/dependencies_scope.dart';
+import 'package:tstripe/src/features/payment/data/payment_repository.dart';
 
 /// {@template dependencies}
 /// Application dependencies.
@@ -24,6 +25,9 @@ class Dependencies {
 
   /// Authentication controller
   late final AuthenticationController authenticationController;
+
+  /// Payment repository
+  late final IPaymentRepository paymentRepository;
 
   @override
   String toString() => 'Dependencies{}';

@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "www.sbdor.template.agorawebrtc"
+    namespace = "www.sbdor.template.tstripe"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

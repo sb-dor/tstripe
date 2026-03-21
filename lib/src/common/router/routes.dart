@@ -4,6 +4,7 @@ import 'package:tstripe/src/features/account/widget/profile_screen.dart';
 import 'package:tstripe/src/features/authentication/widget/signin_screen.dart';
 import 'package:tstripe/src/features/developer/widget/developer_screen.dart';
 import 'package:tstripe/src/features/home/widget/home_screen.dart';
+import 'package:tstripe/src/features/payment/widgets/payment_screen.dart';
 import 'package:tstripe/src/features/settings/widget/settings_screen.dart';
 
 enum Routes with OctopusRoute {
@@ -12,7 +13,8 @@ enum Routes with OctopusRoute {
   profile('profile', title: 'Profile'),
   developer('developer', title: 'Developer'),
   //settingsDialog('settings-dialog', title: 'Settings'),
-  settings('settings', title: 'Settings');
+  settings('settings', title: 'Settings'),
+  payment('payment', title: 'Payment');
 
   const Routes(this.name, {this.title});
 
@@ -30,5 +32,6 @@ enum Routes with OctopusRoute {
     Routes.profile => const ProfileScreen(),
     Routes.developer => const DeveloperScreen(),
     Routes.settings => const SettingsScreen(),
+    Routes.payment => const PaymentScreen(),
   };
 }

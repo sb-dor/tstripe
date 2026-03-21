@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:control/control.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:l/l.dart';
 import 'package:platform_info/platform_info.dart';
+import 'package:tstripe/src/common/constant/config.dart';
 import 'package:tstripe/src/common/constant/pubspec.yaml.g.dart';
 import 'package:tstripe/src/common/controller/controller_observer.dart';
 import 'package:tstripe/src/common/model/app_metadata.dart';
@@ -11,6 +13,7 @@ import 'package:tstripe/src/features/authentication/controller/authentication_co
 import 'package:tstripe/src/features/authentication/data/authentication_repository.dart';
 import 'package:tstripe/src/features/initialization/data/platform/platform_initialization.dart';
 import 'package:tstripe/src/features/initialization/models/dependencies.dart';
+import 'package:tstripe/src/features/payment/data/payment_repository.dart';
 
 /// Initializes the app and returns a [Dependencies] object
 Future<Dependencies> $initializeDependencies({
@@ -63,5 +66,10 @@ final Map<String, _InitializationStep> _initializationSteps = <String, _Initiali
   'Restore settings': (_) {},
   'Prepare authentication controller': (dependencies) => dependencies.authenticationController =
       AuthenticationController(repository: AuthenticationRepositoryImpl()),
+  'Initialize Stripe SDK': (_) {
+    Stripe.publishableKey = Config.stripePublishableKey;
+  },
+  'Prepare payment repository': (dependencies) =>
+      dependencies.paymentRepository = PaymentRepositoryImpl(secretKey: Config.stripeSecretKey),
   // The 'Shrink database' step will only be included in non-release build
 };

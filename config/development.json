@@ -5,7 +5,6 @@
   "MAX_LAYOUT_WIDTH": 768,
   "ALPHA": false,
   "BETA": false,
-  "AGORA_APP_ID": "",
-  "AGORA_TEMP_TOKEN": "",
-  "AGORA_APP_CERTIFICATE": ""
+  "STRIPE_PUBLISHABLE_KEY": "",
+  "STRIPE_SECRET_KEY": ""
 }
