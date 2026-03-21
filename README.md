@@ -112,21 +112,6 @@ Add Stripe.js to `web/index.html` before `</head>`:
 
 ---
 
-### 5. `main.dart` — binding initialization
-
-`WidgetsFlutterBinding.ensureInitialized()` must be called before Stripe initializes so the web plugin (`StripeJs`) is properly registered:
-
-```dart
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  appZone(() async { ... });
-}
-```
-
-Without this, Flutter Web falls back to the native `MethodChannelStripe` implementation which calls `dart:io`'s `Platform._operatingSystem` — unavailable on web.
-
----
-
 ## Running the app
 
 All launch configurations in `.vscode/launch.json` already pass the config file automatically via `--dart-define-from-file=config/production.json`.
