@@ -116,8 +116,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             prefixIcon: const Icon(Icons.person_outline_rounded),
                             errorText: _nameError,
                             filled: true,
-                            fillColor: theme.colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.5),
+                            fillColor: theme.colorScheme.surfaceContainerHighest.withValues(
+                              alpha: 0.5,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
@@ -128,23 +129,15 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF0F3460),
-                                width: 2,
-                              ),
+                              borderSide: const BorderSide(color: Color(0xFF0F3460), width: 2),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                color: theme.colorScheme.error,
-                              ),
+                              borderSide: BorderSide(color: theme.colorScheme.error),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                color: theme.colorScheme.error,
-                                width: 2,
-                              ),
+                              borderSide: BorderSide(color: theme.colorScheme.error, width: 2),
                             ),
                           ),
                         ),
@@ -155,8 +148,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             onPressed: _isValid ? _submit : null,
                             style: FilledButton.styleFrom(
                               backgroundColor: const Color(0xFF0F3460),
-                              disabledBackgroundColor:
-                                  const Color(0xFF0F3460).withValues(alpha: 0.3),
+                              disabledBackgroundColor: const Color(
+                                0xFF0F3460,
+                              ).withValues(alpha: 0.3),
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),

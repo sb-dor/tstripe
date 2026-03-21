@@ -19,7 +19,7 @@ import 'package:path/path.dart' as p;
 
 // then change after renaming you project, after running:
 // dart run tool/dart/rename_project.dart --name="qqq" --organization="www" --description="eee"
-const String _defaultName = 'agorawebrtc'; // current app's defaultName
+const String _defaultName = ''; // current app's defaultName
 const String _defaultOrganization = 'dev.flutter';
 const String _defaultDescription = '_description';
 
