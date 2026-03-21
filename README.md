@@ -1,6 +1,6 @@
 # tstripe
 
-A Flutter application demonstrating Stripe one-time payment integration for testing purposes. Supports Android, iOS, and Web.
+A Flutter application demonstrating Stripe one-time payment integration for testing purposes. Supports Android and iOS
 
 ---
 
@@ -99,16 +99,6 @@ Add a custom URL scheme to `ios/Runner/Info.plist` for 3D Secure redirect suppor
 ```
 
 This allows Stripe to redirect back to the app after 3DS bank authentication via `tstripe://payment-return`.
-
----
-
-### 4. Web setup
-
-Add Stripe.js to `web/index.html` before `</head>`:
-
-```html
-<script src="https://js.stripe.com/v3/" async></script>
-```
 
 ---
 
