@@ -1,6 +1,9 @@
 # tstripe
 
-A Flutter application demonstrating Stripe one-time payment integration for testing purposes. Supports Android and iOS
+A Flutter application demonstrating Stripe payment integration with a full e-commerce flow — authentication, product catalogue, add-to-cart, and checkout via Stripe. Supports Android and iOS.
+
+> **Before diving into the code, read [`EXPLANATION.md`](EXPLANATION.md) first.**
+> It covers how Stripe keys work, the difference between direct and backend payment modes, what `clientSecret` is, how webhooks fit in, and how the cart and auth features connect to the Laravel backend.
 
 ---
 
