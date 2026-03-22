@@ -4,7 +4,6 @@ import 'package:octopus/octopus.dart';
 
 import 'package:tstripe/src/common/router/routes.dart';
 import 'package:tstripe/src/features/authentication/widget/authentication_scope.dart';
-import 'package:tstripe/src/features/cart/controller/cart_controller.dart';
 import 'package:tstripe/src/features/cart/widgets/cart_data_controller.dart';
 import 'package:tstripe/src/features/initialization/models/dependencies.dart';
 import 'package:tstripe/src/features/shop/controller/products_controller.dart';

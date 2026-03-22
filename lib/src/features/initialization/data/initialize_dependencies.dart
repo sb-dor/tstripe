@@ -11,7 +11,6 @@ import 'package:tstripe/src/common/model/app_metadata.dart';
 import 'package:tstripe/src/common/util/screen_util.dart';
 import 'package:tstripe/src/features/authentication/controller/authentication_controller.dart';
 import 'package:tstripe/src/features/authentication/data/authentication_repository.dart';
-import 'package:tstripe/src/features/cart/controller/cart_controller.dart';
 import 'package:tstripe/src/features/cart/data/cart_repository.dart';
 import 'package:tstripe/src/features/cart/widgets/cart_data_controller.dart';
 import 'package:tstripe/src/features/initialization/data/platform/platform_initialization.dart';

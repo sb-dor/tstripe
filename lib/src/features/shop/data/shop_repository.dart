@@ -21,10 +21,7 @@ final class ShopRepositoryImpl implements IShopRepository {
 
   @override
   Future<List<Product>> getProducts({required String token}) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/products'),
-      headers: _headers(token),
-    );
+    final response = await http.get(Uri.parse('$baseUrl/api/products'), headers: _headers(token));
 
     if (response.statusCode != 200) {
       final body = jsonDecode(response.body) as Map<String, Object?>;

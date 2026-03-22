@@ -6,10 +6,7 @@ import 'package:tstripe/src/features/cart/models/cart_item.dart';
 import 'package:tstripe/src/features/payment/models/payment_intent.dart';
 
 abstract interface class ICartRepository {
-  Future<PaymentIntent> checkout({
-    required List<CartItem> items,
-    required String token,
-  });
+  Future<PaymentIntent> checkout({required List<CartItem> items, required String token});
 }
 
 final class CartRepositoryImpl implements ICartRepository {
@@ -18,10 +15,7 @@ final class CartRepositoryImpl implements ICartRepository {
   final String baseUrl;
 
   @override
-  Future<PaymentIntent> checkout({
-    required List<CartItem> items,
-    required String token,
-  }) async {
+  Future<PaymentIntent> checkout({required List<CartItem> items, required String token}) async {
     final body = {
       'items': items
           .map((item) => {'product_id': item.product.id, 'quantity': item.quantity})

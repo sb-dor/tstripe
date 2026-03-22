@@ -27,8 +27,7 @@ class Product {
   String get formattedPrice => '\$${price.toStringAsFixed(2)}';
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || (other is Product && id == other.id);
+  bool operator ==(Object other) => identical(this, other) || (other is Product && id == other.id);
 
   @override
   int get hashCode => id.hashCode;

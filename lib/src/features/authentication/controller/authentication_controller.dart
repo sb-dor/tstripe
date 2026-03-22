@@ -86,27 +86,22 @@ class AuthenticationController extends StateController<AuthenticationState>
 
   final IAuthenticationRepository repository;
 
-  void signIn({required String email, required String password}) => handle(
-    () async {
-      setState(const AuthenticationState.inProgress());
-      final user = await repository.signIn(email: email.trim(), password: password);
-      setState(AuthenticationState.authenticated(user));
-    },
-    error: (e, st) async => setState(AuthenticationState.error(e.toString())),
-  );
+  void signIn({required String email, required String password}) => handle(() async {
+    setState(const AuthenticationState.inProgress());
+    final user = await repository.signIn(email: email.trim(), password: password);
+    setState(AuthenticationState.authenticated(user));
+  }, error: (e, st) async => setState(AuthenticationState.error(e.toString())));
 
-  void register({required String name, required String email, required String password}) => handle(
-    () async {
-      setState(const AuthenticationState.inProgress());
-      final user = await repository.register(
-        name: name.trim(),
-        email: email.trim(),
-        password: password,
-      );
-      setState(AuthenticationState.authenticated(user));
-    },
-    error: (e, st) async => setState(AuthenticationState.error(e.toString())),
-  );
+  void register({required String name, required String email, required String password}) =>
+      handle(() async {
+        setState(const AuthenticationState.inProgress());
+        final user = await repository.register(
+          name: name.trim(),
+          email: email.trim(),
+          password: password,
+        );
+        setState(AuthenticationState.authenticated(user));
+      }, error: (e, st) async => setState(AuthenticationState.error(e.toString())));
 
   void logout() => handle(() async {
     final token = state.user?.token;
