@@ -6,5 +6,6 @@
   "ALPHA": false,
   "BETA": false,
   "STRIPE_PUBLISHABLE_KEY": "",
-  "STRIPE_SECRET_KEY": ""
+  "STRIPE_SECRET_KEY": "",
+  "BACKEND_API_URL": "http://localhost:8000"
 }

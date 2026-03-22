@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:octopus/octopus.dart';
 import 'package:tstripe/src/features/account/widget/profile_screen.dart';
 import 'package:tstripe/src/features/authentication/widget/signin_screen.dart';
+import 'package:tstripe/src/features/cart/widgets/cart_screen.dart';
 import 'package:tstripe/src/features/developer/widget/developer_screen.dart';
 import 'package:tstripe/src/features/home/widget/home_screen.dart';
 import 'package:tstripe/src/features/payment/widgets/payment_screen.dart';
 import 'package:tstripe/src/features/settings/widget/settings_screen.dart';
+import 'package:tstripe/src/features/shop/widgets/products_screen.dart';
 
 enum Routes with OctopusRoute {
   signin('signin', title: 'Sign-In'),
@@ -14,7 +16,9 @@ enum Routes with OctopusRoute {
   developer('developer', title: 'Developer'),
   //settingsDialog('settings-dialog', title: 'Settings'),
   settings('settings', title: 'Settings'),
-  payment('payment', title: 'Payment');
+  payment('payment', title: 'Payment'),
+  shop('shop', title: 'Shop'),
+  cart('cart', title: 'Cart');
 
   const Routes(this.name, {this.title});
 
@@ -33,5 +37,7 @@ enum Routes with OctopusRoute {
     Routes.developer => const DeveloperScreen(),
     Routes.settings => const SettingsScreen(),
     Routes.payment => const PaymentScreen(),
+    Routes.shop => const ProductsScreen(),
+    Routes.cart => const CartScreen(),
   };
 }

@@ -304,3 +304,229 @@ On Android, `FlutterFragmentActivity` handles this automatically — no URL sche
 |---|---|---|
 | `4242 4242 4242 4242` | No | No |
 | `4000 0027 6000 3184` | Yes | Yes |
+
+---
+
+## 9. Authentication — email + password with Sanctum
+
+Authentication was upgraded from a name-only approach to real email + password registration and login backed by Laravel Sanctum.
+
+### `User` model (`model/user.dart`)
+
+A `token` field was added:
+
+```dart
+const User({required this.id, this.name, this.email, this.token});
+final String? token;
+```
+
+The token is the Sanctum plain-text API token returned after login/register. It lives **only in memory** for the session — it is never written to disk. Every authenticated API call includes it as `Authorization: Bearer <token>`.
+
+### `IAuthenticationRepository`
+
+```dart
+abstract interface class IAuthenticationRepository {
+  Future<User> signIn({required String email, required String password});
+  Future<User> register({required String name, required String email, required String password});
+  Future<void> logout({required String token});
+}
+```
+
+- `signIn` → `POST /api/auth/login`
+- `register` → `POST /api/auth/register` (also sends `password_confirmation`)
+- `logout` → `POST /api/auth/logout` with `Authorization: Bearer <token>`
+
+Laravel validation errors (e.g. email already taken) come as `{ errors: { field: [messages] } }`. The repository unwraps the first message and re-throws it as an `Exception` so the controller can surface it.
+
+### `AuthenticationController`
+
+```dart
+void signIn({required String email, required String password})
+void register({required String name, required String email, required String password})
+void logout()
+```
+
+Both `signIn` and `register` set `inProgress` state first, call the repository, then set `authenticated` on success or `error` on failure. Uses `DroppableControllerHandler` — if the user taps the button twice, the second call is dropped.
+
+### `SignInScreen`
+
+A single screen handles both login and register with a toggle:
+
+- **Login mode**: email + password fields
+- **Register mode**: name + email + password fields (name field appears/disappears via `_isRegister` flag)
+- Password field has a show/hide toggle (`_obscurePassword`)
+- Error banner appears when state is `Authentication$ErrorState`
+- Button shows `CircularProgressIndicator` when `Authentication$InProgressState`
+- `PopScope(canPop: !isInProgress)` prevents backing out mid-request
+
+The screen uses `ListenableBuilder` (instead of `AnimatedBuilder`) wrapping the controller directly — no need for `AuthenticationScope.of` inside the builder because the controller is cached in `initState`.
+
+---
+
+## 10. Shop feature — products catalogue
+
+### `ShopScope` (`features/shop/widgets/shop_scope.dart`)
+
+A `StatefulWidget` + `InheritedWidget` pair that scopes `ProductsController` to the subtree. It is placed at the `ProductsScreen` level, so both `ProductsScreen` and any screen pushed on top (like `CartScreen`) can access the same controller instance.
+
+`CartController` is **not** created here — it lives in `Dependencies` (app-lifetime). `ShopScope` exposes a `cartControllerOf` static accessor that simply delegates to `Dependencies.of(context).cartController`.
+
+### `ProductsController` (`features/shop/controller/products_controller.dart`)
+
+Sealed states:
+```
+Products$IdleState
+Products$LoadingState
+Products$LoadedState(List<Product> products)
+Products$ErrorState(String? message)
+```
+
+Single method: `void load({required String token})` — calls `IShopRepository.getProducts`, transitions through loading → loaded or error.
+
+Uses `SequentialControllerHandler` so only one load runs at a time. Pull-to-refresh and the Retry button both call `load` again safely.
+
+### `IShopRepository` (`features/shop/data/shop_repository.dart`)
+
+Contains only `getProducts`. The `checkout` method was deliberately removed from this interface — it belongs to the cart feature, not the shop feature.
+
+```dart
+abstract interface class IShopRepository {
+  Future<List<Product>> getProducts({required String token});
+}
+```
+
+### `ProductsScreen`
+
+- Wraps `_ProductsBody` in `ShopScope`
+- `GridView.builder` — 2 columns, `childAspectRatio: 0.75`
+- Cart icon in `AppBar` shows a red badge with item count when the cart is non-empty
+- Pull-to-refresh reloads products
+- Error state shows a Retry button
+- "Add to Cart" / "Added" button on each product card — visual feedback when product is already in cart
+
+---
+
+## 11. Cart feature — separate from shop
+
+The cart lives in its own feature folder `lib/src/features/cart/`, completely independent from the shop feature.
+
+```
+features/cart/
+  models/cart_item.dart
+  controller/cart_controller.dart
+  data/cart_repository.dart
+  widgets/cart_screen.dart
+```
+
+### Why separate from shop?
+
+The shop feature is about browsing — loading and displaying products. The cart feature is about the purchase lifecycle — state, quantities, checkout, payment. Keeping them in separate folders means they can evolve independently and their responsibilities are clear.
+
+### `CartItem` (`features/cart/models/cart_item.dart`)
+
+```dart
+@immutable
+class CartItem {
+  final Product product;
+  final int quantity;
+  double get subtotal => product.price * quantity;
+}
+```
+
+Equality is based on `product` only (not quantity) — this is intentional so that `indexWhere` lookups in the controller find the item regardless of its current quantity.
+
+### `CartController` (`features/cart/controller/cart_controller.dart`)
+
+Lives in `Dependencies` at **app-lifetime** — created during initialization and never disposed until the app exits. This means the cart survives navigation: adding items on `ProductsScreen`, opening `CartScreen`, going back, navigating around — the cart is never reset by widget lifecycle.
+
+`CartState`:
+```dart
+class CartState {
+  final List<CartItem> items;
+  final bool isCheckingOut;
+  int get totalInCents     // sum of price * quantity * 100
+  int get itemCount        // total number of individual items
+  bool get isEmpty
+  String get formattedTotal  // e.g. "$12.50"
+}
+```
+
+Methods:
+- `add(product)` — adds one, or increments quantity if already in cart
+- `increment(product)` — alias for `add`
+- `decrement(product)` — decrements, removes item when quantity reaches 0
+- `remove(product)` — removes regardless of quantity
+- `clear()` — resets to empty state (called after successful payment)
+- `checkout(token, repository)` — sets `isCheckingOut=true`, calls `ICartRepository.checkout`, returns `PaymentIntent`
+
+Uses `SequentialControllerHandler` — only one operation runs at a time (prevents double-tapping checkout).
+
+### `ICartRepository` (`features/cart/data/cart_repository.dart`)
+
+```dart
+abstract interface class ICartRepository {
+  Future<PaymentIntent> checkout({
+    required List<CartItem> items,
+    required String token,
+  });
+}
+```
+
+`CartRepositoryImpl` sends `POST /api/orders/checkout` with:
+```json
+{ "items": [{ "product_id": 1, "quantity": 2 }, ...] }
+```
+
+The server calculates the total — the client **never sends an amount**. The response is the same JSON shape as Stripe's own PaymentIntent API, so `PaymentIntent.fromMap` works unchanged.
+
+### `CartScreen` (`features/cart/widgets/cart_screen.dart`)
+
+- Gets `CartController` from `Dependencies.of(context).cartController`
+- Gets `ICartRepository` from `Dependencies.of(context).cartRepository`
+- Uses `ListenableBuilder` on the controller — rebuilds automatically when cart state changes
+- `PopScope(canPop: !isCheckingOut)` — prevents back navigation during checkout
+- On successful payment: calls `cartController.clear()` then shows a success dialog, then pops back to products
+
+---
+
+## 12. Dependencies and initialization
+
+`Dependencies` is the app-level DI container. New fields added:
+
+```dart
+late final IShopRepository shopRepository;
+late final ICartRepository cartRepository;
+late final CartController cartController;
+```
+
+Initialization order in `initialize_dependencies.dart`:
+```
+'Prepare shop repository'  → ShopRepositoryImpl(baseUrl)
+'Prepare cart repository'  → CartRepositoryImpl(baseUrl)
+'Prepare cart controller'  → CartController()
+```
+
+`CartController` is initialized after its repository so it is ready to use immediately.
+
+### Why `CartController` in `Dependencies` and not in `ShopScope`?
+
+`ShopScope` is a widget-scoped object — it is created when `ProductsScreen` mounts and disposed when it unmounts. If the user navigates away and back, a new `ShopScope` would create a new `CartController`, losing the cart contents.
+
+Placing `CartController` in `Dependencies` (initialized once at app startup) ensures the cart state persists for the entire app session regardless of navigation.
+
+---
+
+## 13. `payment_repository.dart` vs `cart_repository.dart`
+
+These two repositories handle Stripe payments but serve completely different purposes:
+
+| | `payment_repository.dart` | `cart_repository.dart` |
+|---|---|---|
+| Purpose | Standalone "Quick Pay" screen | Cart checkout with server-side order |
+| Endpoint | `POST /api/create-payment` or Stripe directly | `POST /api/orders/checkout` |
+| Amount | Client sends the amount | Server calculates from product prices |
+| Order created | No | Yes (idempotent — reuses pending order) |
+| Who calls it | `PaymentController` / `PaymentScreen` | `CartController` / `CartScreen` |
+
+`payment_repository.dart` exists for the original one-off payment demo and has two implementations (`PaymentRepositoryImpl` for direct-to-Stripe in dev, `BackendPaymentRepositoryImpl` for the backend). For any real e-commerce flow, use `cart_repository.dart`.
+

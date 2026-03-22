@@ -11,9 +11,13 @@ import 'package:tstripe/src/common/model/app_metadata.dart';
 import 'package:tstripe/src/common/util/screen_util.dart';
 import 'package:tstripe/src/features/authentication/controller/authentication_controller.dart';
 import 'package:tstripe/src/features/authentication/data/authentication_repository.dart';
+import 'package:tstripe/src/features/cart/controller/cart_controller.dart';
+import 'package:tstripe/src/features/cart/data/cart_repository.dart';
+import 'package:tstripe/src/features/cart/widgets/cart_data_controller.dart';
 import 'package:tstripe/src/features/initialization/data/platform/platform_initialization.dart';
 import 'package:tstripe/src/features/initialization/models/dependencies.dart';
 import 'package:tstripe/src/features/payment/data/payment_repository.dart';
+import 'package:tstripe/src/features/shop/data/shop_repository.dart';
 
 /// Initializes the app and returns a [Dependencies] object
 Future<Dependencies> $initializeDependencies({
@@ -64,12 +68,22 @@ final Map<String, _InitializationStep> _initializationSteps = <String, _Initiali
   'Log app open': (_) {},
   'Get remote config': (_) {},
   'Restore settings': (_) {},
-  'Prepare authentication controller': (dependencies) => dependencies.authenticationController =
-      AuthenticationController(repository: AuthenticationRepositoryImpl()),
+  'Prepare authentication controller': (dependencies) =>
+      dependencies.authenticationController = AuthenticationController(
+        repository: AuthenticationRepositoryImpl(baseUrl: Config.backendBaseUrl),
+      ),
   'Initialize Stripe SDK': (_) {
     Stripe.publishableKey = Config.stripePublishableKey;
   },
   'Prepare payment repository': (dependencies) =>
-      dependencies.paymentRepository = PaymentRepositoryImpl(secretKey: Config.stripeSecretKey),
+      dependencies.paymentRepository = Config.backendBaseUrl.isNotEmpty
+      ? BackendPaymentRepositoryImpl(baseUrl: Config.backendBaseUrl)
+      : PaymentRepositoryImpl(secretKey: Config.stripeSecretKey),
+  'Prepare shop repository': (dependencies) =>
+      dependencies.shopRepository = ShopRepositoryImpl(baseUrl: Config.backendBaseUrl),
+  'Prepare cart repository': (dependencies) =>
+      dependencies.cartRepository = CartRepositoryImpl(baseUrl: Config.backendBaseUrl),
+  'Prepare cart controller': (dependencies) =>
+      dependencies.cartDataController = CartDataController(),
   // The 'Shrink database' step will only be included in non-release build
 };

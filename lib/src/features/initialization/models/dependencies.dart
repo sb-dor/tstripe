@@ -1,8 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:tstripe/src/common/model/app_metadata.dart';
 import 'package:tstripe/src/features/authentication/controller/authentication_controller.dart';
+import 'package:tstripe/src/features/cart/controller/cart_controller.dart';
+import 'package:tstripe/src/features/cart/data/cart_repository.dart';
+import 'package:tstripe/src/features/cart/widgets/cart_data_controller.dart';
 import 'package:tstripe/src/features/initialization/widget/dependencies_scope.dart';
 import 'package:tstripe/src/features/payment/data/payment_repository.dart';
+import 'package:tstripe/src/features/shop/data/shop_repository.dart';
 
 /// {@template dependencies}
 /// Application dependencies.
@@ -28,6 +32,15 @@ class Dependencies {
 
   /// Payment repository
   late final IPaymentRepository paymentRepository;
+
+  /// Shop repository
+  late final IShopRepository shopRepository;
+
+  /// Cart repository
+  late final ICartRepository cartRepository;
+
+  /// Cart controller — app-lifetime, shared across all screens
+  late final CartDataController cartDataController;
 
   @override
   String toString() => 'Dependencies{}';

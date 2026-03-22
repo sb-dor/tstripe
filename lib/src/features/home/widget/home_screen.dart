@@ -12,10 +12,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Center(
-      child: FilledButton.icon(
-        icon: const Icon(Icons.payment),
-        label: const Text('Pay with Stripe'),
-        onPressed: () => Octopus.of(context).push(Routes.payment),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FilledButton.icon(
+            icon: const Icon(Icons.storefront),
+            label: const Text('Browse Products'),
+            onPressed: () => Octopus.of(context).push(Routes.shop),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.payment),
+            label: const Text('Quick Pay'),
+            onPressed: () => Octopus.of(context).push(Routes.payment),
+          ),
+        ],
       ),
     ),
   );

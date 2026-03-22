@@ -82,6 +82,11 @@ abstract final class Config {
     defaultValue: '',
   );
 
+  /// Base URL of the Laravel backend (e.g. http://localhost:8000).
+  /// When non-empty, [BackendPaymentRepositoryImpl] is used instead of [PaymentRepositoryImpl].
+  /// Leave empty to use direct Stripe API mode (no backend).
+  static const String backendBaseUrl = String.fromEnvironment('BACKEND_API_URL', defaultValue: '');
+
   // --- AGORA --- //
 
   /// Agora App ID from https://console.agora.io
