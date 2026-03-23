@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:tstripe/src/common/util/disposable.dart';
 import 'package:tstripe/src/features/initialization/models/dependencies.dart';
 import 'package:tstripe/src/features/payment/controller/payment_controller.dart';
 import 'package:tstripe/src/features/payment/widgets/controllers/payment_form_controller.dart';
@@ -38,16 +39,27 @@ class PaymentConfigWidget extends StatefulWidget {
   State<PaymentConfigWidget> createState() => _PaymentConfigWidgetState();
 }
 
-class _PaymentConfigWidgetState extends State<PaymentConfigWidget> {
+class _PaymentConfigWidgetState extends State<PaymentConfigWidget> with Disposable {
   late final PaymentController _controller;
   late final PaymentFormController _formController;
 
   @override
   void initState() {
     super.initState();
-    _controller = PaymentController(repository: Dependencies.of(context).paymentRepository)
+    final dependencies = Dependencies.of(context);
+    _controller = PaymentController(repository: dependencies.paymentRepository)
       ..addListener(_onStateChanged);
+
+    /// The `defer` function is used for educational purposes only. You can easily remove controllers released with `dispose`.
+
+    defer(() async {
+      _controller
+        ..removeListener(_onStateChanged)
+        ..dispose();
+    });
+
     _formController = PaymentFormController();
+    defer(() async => _formController.dispose());
   }
 
   void _onStateChanged() {
@@ -56,10 +68,8 @@ class _PaymentConfigWidgetState extends State<PaymentConfigWidget> {
 
   @override
   void dispose() {
-    _controller
-      ..removeListener(_onStateChanged)
-      ..dispose();
-    _formController.dispose();
+    disposeResources();
+
     super.dispose();
   }
 
